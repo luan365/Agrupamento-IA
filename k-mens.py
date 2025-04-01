@@ -4,14 +4,14 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from math import sqrt
 import pandas as pd
-
-#wine = load_wine()
-#criar um dataframe usando data e features_names
+import seaborn as sns
+import time
 
 # Load the data
 class ClusteringKmeans:
-    def __init__(self, database):
-        self.database = database
+    def __init__(self, databases):
+        self.database = databases
+        self.dfDatabase = pd.DataFrame(databases.data, columns = databases.feature_names)
         self.qtdClusters = []
         self.inertia = []
         self.qtdClusterJoelho = None
@@ -21,11 +21,18 @@ class ClusteringKmeans:
         self.target = None
         self.clusterOtimo = None
 
+
+    #Ver as características das dimensões do dataset
+    def plotDataset(self):
+        df = pd.DataFrame(self.database.data, columns=self.database.feature_names)
+        df["target"] = self.database.target_names[self.database.target]
+        _ = sns.pairplot(df, hue="target")
+
     #Metodo do cotovelo com o objetivo de encontrar o número de clusters ideal - Kmeans
     def calcutateWcss(self):
         for i in range(1, 11):
             self.qtdClusters.append(i)
-            self.kmeans = KMeans(n_clusters=i).fit(self.database) #gerando centroides (agrupamentos)
+            self.kmeans = KMeans(n_clusters=i).fit(self.dfDatabase) #gerando centroides (agrupamentos)
             self.inertia.append(self.kmeans.inertia_) #inertia é a soma das distâncias quadradas das amostras para o centro do cluster
             print("Inertia: ", self.inertia)#printa a inertia de cada cluster
 
@@ -52,9 +59,9 @@ class ClusteringKmeans:
 
 
     def plotKmeansQtdOtima(self):
-        newkmeans = KMeans(n_clusters=self.clusterOtimo).fit(self.database)
+        newkmeans = KMeans(n_clusters=self.clusterOtimo).fit(self.dfDatabase)
         pca = PCA(n_components=2)
-        principal_components = pca.fit_transform(self.database)
+        principal_components = pca.fit_transform(self.dfDatabase)
         plt.scatter(principal_components[:, 0], principal_components[:, 1], c=newkmeans.labels_, cmap='viridis')
         plt.ylabel('Componente PCA 2')
         plt.title(f'Agrupamento KMeans com {self.clusterOtimo} Clusters')
@@ -64,16 +71,18 @@ class ClusteringKmeans:
 if __name__ == '__main__':
 #   Kmenas com a base Iris
     iris = load_iris()
-    dfIris = pd.DataFrame(iris.data, columns = iris.feature_names)
-    kmeansIris = ClusteringKmeans(dfIris)
+    kmeansIris = ClusteringKmeans(iris)
+    kmeansIris.plotDataset() #plotar um gráfico mostrando os atributos do meu dataset
+    plt.figure()
     kmeansIris.calcutateWcss()
     kmeansIris.optimal_number_of_clusters()
-    kmeansIris.plotKmeansQtdOtima()
+    kmeansIris.plotKmeansQtdOtima() #USO DO PCA
 #---------------------------------------------------
 #   Kmenas com a base Wine
     wine = load_wine()
-    dfWine = pd.DataFrame(wine.data, columns = wine.feature_names)
-    kmeansWine = ClusteringKmeans(dfWine)
+    kmeansWine = ClusteringKmeans(wine)
+    kmeansWine.plotDataset() #plotar um gráfico mostrando os atributos do meu dataset
+    plt.figure()
     kmeansWine.calcutateWcss()
     kmeansWine.optimal_number_of_clusters()
-    kmeansWine.plotKmeansQtdOtima()
+    kmeansWine.plotKmeansQtdOtima() #USO DO PCA
