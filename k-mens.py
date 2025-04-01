@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_iris, load_wine
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from math import sqrt
@@ -34,6 +34,7 @@ class ClusteringKmeans:
         plt.ylabel('Inertia')
         plt.show()
 
+    # após o metódo do cotovelo é preciso inserir a quantidade de cluster idela para plotar o agrupamento do K-means
     def optimal_number_of_clusters(self):
         x1, y1 = 1, self.inertia[0]
         x2, y2 = 10, self.inertia[len(self.inertia) - 1]
@@ -49,7 +50,7 @@ class ClusteringKmeans:
         self.clusterOtimo = distances.index(max(distances)) + 2
         print("---> Número de clusters ideal: ", self.clusterOtimo)
 
-    #após o metódo do cotovelo é preciso inserir a quantidade de cluster idela para plotar o agrupamento do K-means
+
     def plotKmeansQtdOtima(self):
         newkmeans = KMeans(n_clusters=self.clusterOtimo).fit(self.database)
         pca = PCA(n_components=2)
@@ -61,9 +62,18 @@ class ClusteringKmeans:
 
 
 if __name__ == '__main__':
+#   Kmenas com a base Iris
     iris = load_iris()
-    df = pd.DataFrame(iris.data, columns = iris.feature_names)
-    kmeans = ClusteringKmeans(df)
-    kmeans.calcutateWcss()
-    kmeans.optimal_number_of_clusters()
-    kmeans.plotKmeansQtdOtima()
+    dfIris = pd.DataFrame(iris.data, columns = iris.feature_names)
+    kmeansIris = ClusteringKmeans(dfIris)
+    kmeansIris.calcutateWcss()
+    kmeansIris.optimal_number_of_clusters()
+    kmeansIris.plotKmeansQtdOtima()
+#---------------------------------------------------
+#   Kmenas com a base Wine
+    wine = load_wine()
+    dfWine = pd.DataFrame(wine.data, columns = wine.feature_names)
+    kmeansWine = ClusteringKmeans(dfWine)
+    kmeansWine.calcutateWcss()
+    kmeansWine.optimal_number_of_clusters()
+    kmeansWine.plotKmeansQtdOtima()
