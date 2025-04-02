@@ -7,15 +7,20 @@ from kneed import KneeLocator
 import pandas as pd
 import seaborn as sns
 
+# Classe para implementação do Algoritmo Bisecting KMeans
 class BisectingKMeansAlgorithm:
+    # Recebe um objeto da classe Bunch referênte a base de dados e faz o load dos dados
     def __init__(self, data_set_title, data_set: Bunch):
         self.title = data_set_title
         self.data_set = data_set.data
 
+    # Faz a normalização dos dados com o StandardScaler
     def normalize_data(self):
         scaler = StandardScaler()
         self.data_set = scaler.fit_transform(self.data_set)
 
+    # Faz o metodo do joelho para escolha da melhor quantidade de clusters e salva o melhor número de
+    # clusters na variável best_cluster
     def elbow_method(self):
         self.inertias = []
         cluster_range = range(1, 10)
@@ -25,7 +30,8 @@ class BisectingKMeansAlgorithm:
             self.inertias.append(model.inertia_)
         k = KneeLocator(cluster_range, self.inertias, curve='convex', direction='decreasing')
         self.best_cluster = k.elbow
-        
+
+    # Gera o gráfico do Joelho e faz a marcação no gráfico com o melhor número de clusters
     def plot_elbow(self):
         plt.plot(range(1, 10), self.inertias, marker='o')
         plt.axvline(x=self.best_cluster, color='red', linestyle='--', label=f'Melhor cluster: {self.best_cluster}')
@@ -34,6 +40,8 @@ class BisectingKMeansAlgorithm:
         plt.ylabel("Inércias")
         plt.show()
 
+    # Faz o gráfico com a base de dados separada com a melhor quantidade de clusters, mas dá opção ao usuário
+    # de definir outra quantidade de clusters para ser representado
     def plot_clusters(self, n_cluster = None):
         if n_cluster is None:
             n_cluster = self.best_cluster
@@ -51,7 +59,8 @@ class BisectingKMeansAlgorithm:
         plt.grid(True)
         plt.tight_layout()
         plt.show()
-    
+
+    # Faz a execução das funções anteriores em sequência
     def run_script(self):
         self.normalize_data()
         self.elbow_method()
