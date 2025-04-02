@@ -5,13 +5,19 @@ from sklearn.decomposition import PCA
 from math import sqrt
 import pandas as pd
 import seaborn as sns
-import time
+from sklearn.preprocessing import StandardScaler
+
 
 # Load the data
 class ClusteringKmeans:
     def __init__(self, databases):
         self.database = databases
         self.dfDatabase = pd.DataFrame(databases.data, columns = databases.feature_names)
+
+        # Normalizando bases com StandardScaler
+        scaler = StandardScaler()
+        self.dfDatabase = scaler.fit_transform(self.dfDatabase)
+
         self.qtdClusters = []
         self.inertia = []
         self.qtdClusterJoelho = None
