@@ -1,5 +1,3 @@
-from sklearn.datasets import load_wine
-from sklearn.datasets import load_iris
 from sklearn.utils._bunch import Bunch
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import BisectingKMeans
@@ -59,10 +57,3 @@ class BisectingKMeansAlgorithm:
         self.elbow_method()
         self.plot_elbow()
         self.plot_clusters()
-
-if __name__ == "__main__":
-    bisecting = BisectingKMeansAlgorithm("Iris", load_iris())
-    bisecting.run_script()
-    bisecting = BisectingKMeansAlgorithm("Wine", load_wine())
-    bisecting.run_script()
-    
